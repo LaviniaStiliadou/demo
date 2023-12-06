@@ -77,7 +77,7 @@
     <quantme:quantumHardwareSelectionSubprocess id="Activity_1kzcfu6">
       <bpmn:incoming>Flow_1vspi3k</bpmn:incoming>
       <bpmn:outgoing>Flow_1yc4e6u</bpmn:outgoing>
-      <quantme:quantumCircuitExecutionTask id="QuantumCircuitExecutionTask_11q8xh3" name="Execute QAOA Circuits" provider="ibm" qpu="aer_qasm_simulator" shots="2000" programmingLanguage="qiskit">
+      <quantme:quantumCircuitExecutionTask id="QuantumCircuitExecutionTask_11q8xh3" name="Execute QAOA Circuits" provider="ibmq" qpu="aer_qasm_simulator" shots="2000" programmingLanguage="qiskit">
         <bpmn:incoming>Flow_0u8r8e4</bpmn:incoming>
         <bpmn:outgoing>Flow_19ahneq</bpmn:outgoing>
       </quantme:quantumCircuitExecutionTask>
