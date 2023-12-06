@@ -73,6 +73,8 @@ if (optimizedParameters == null) {
         println(optimizedParameters)
 
         optimizedParameters.each { param ->
+            println("Parameter")
+            println(param)
             if (param != null) {
             param_array.push(param.toDouble())
             }
