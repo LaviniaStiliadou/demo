@@ -15,65 +15,78 @@
             <camunda:inputParameter name="url">http://10.101.1.218:6474/quokka/circuit-execution/execution-service</camunda:inputParameter>
             <camunda:inputParameter name="payload">
               <camunda:script scriptFormat="groovy">
-import groovy.json.JsonBuilder
-  def qpu = execution.getVariable("qpu");
-  def circuit = execution.getVariable("circuit");
-  def token = execution.getVariable("token");
-  def gammas = execution.getVariable("gammas");
-  def betas = execution.getVariable("betas");
-  def optimizedParameters = execution.getVariable("optimizedParameters");
-  def subCircuits = execution.getVariable("subCircuits");
-  if (subCircuits != null) {
-    println("Subcircuits: " + subCircuits.toString());
-    circuit = subCircuits.get("subCircuits");
-    println("Circuits after adding subcircuits: " + circuit.toString());
-  }
-  def credentials = [:];
-  credentials.put("token", token);
-  credentials.put("hub", "ibm-q");
-  credentials.put("group", "open")
-  credentials.put("project", "main");
-  credentials.put("url", "https://auth.quantum-computing.ibm.com/api");
-  def request = [:];
-  request.put("qpu", qpu);
-  request.put("credentials", credentials)
-  request.put("shots", 2000);
-  request.put("circuit", circuit);
-  request.put("circuit_format", "qiskit");
-  request.put("provider", "ibm");
-  if (optimizedParameters == null){
+                import groovy.json.JsonBuilder
 
+def qpu = execution.getVariable("qpu")
+def circuit = execution.getVariable("circuit")
+def token = execution.getVariable("token")
+def gammas = execution.getVariable("gammas")
+def betas = execution.getVariable("betas")
+def optimizedParameters = execution.getVariable("optimizedParameters")
+def subCircuits = execution.getVariable("subCircuits")
+
+if (subCircuits != null) {
+    println("Subcircuits: " + subCircuits.toString())
+    circuit = subCircuits.get("subCircuits")
+    println("Circuits after adding subcircuits: " + circuit.toString())
+}
+
+def credentials = [
+    token: token,
+    hub: "ibm-q",
+    group: "open",
+    project: "main",
+    url: "https://auth.quantum-computing.ibm.com/api"
+]
+
+def request = [
+    qpu: qpu,
+    credentials: credentials,
+    shots: 2000,
+    circuit: circuit,
+    circuit_format: "qiskit",
+    provider: "ibm"
+]
+
+if (optimizedParameters == null) {
     if (betas instanceof String) {
-      println("Parsing betas...");
-      betas = betas.drop(1).take(betas.length()-2).split(",");
-      execution.setVariable("betas", betas);
+        println("Parsing betas...")
+        betas = betas.drop(1).take(betas.length() - 2).split(",")
+        execution.setVariable("betas", betas)
     }
 
     if (gammas instanceof String) {
-      println("Parsing gammas...");
-      gammas = gammas.drop(1).take(gammas.length()-2).split(",");
-      execution.setVariable("gammas", gammas);
+        println("Parsing gammas...")
+        gammas = gammas.drop(1).take(gammas.length() - 2).split(",")
+        execution.setVariable("gammas", gammas)
     }
 
-    optimizedParameters = betas + gammas;
-  } else {
-param_array=[];
-println(optimizedParameters);
-if (optimizedParameters && optimizedParameters.trim()) {
-  optimizedParameters=optimizedParameters.drop(1).take(optimizedParameters.length()-2);
-  println(optimizedParameters);
-  optimizedParameters= optimizedParameters.replaceAll("\\s","").split(",");
-  println(optimizedParameters);
-  optimizedParameters.each{ param->
-  param_array.push(param.toDouble());}
-  optimizedParameters=param_array;
+    optimizedParameters = (betas ?: []) + (gammas ?: [])
 } else {
-  optimizedParameters = [];
-}}
-  request.put("parameters", optimizedParameters);
-  requeststring = new JsonBuilder(request).toPrettyString()
-  println(requeststring);
-  return requeststring;</camunda:script>
+    def param_array = []
+    println(optimizedParameters)
+
+    if (optimizedParameters && optimizedParameters.trim()) {
+        optimizedParameters = optimizedParameters.drop(1).take(optimizedParameters.length() - 2)
+        println(optimizedParameters)
+        optimizedParameters = optimizedParameters.replaceAll("\\s", "").split(",")
+        println(optimizedParameters)
+
+        optimizedParameters.each { param ->
+            param_array.push(param.toDouble())
+        }
+        optimizedParameters = param_array
+    } else {
+        optimizedParameters = []
+    }
+}
+
+request.put("parameters", optimizedParameters)
+def requeststring = new JsonBuilder(request).toPrettyString()
+println(requeststring)
+return requeststring
+
+              </camunda:script>
             </camunda:inputParameter>
                           <camunda:outputParameter name="counts">
                 <camunda:script scriptFormat="groovy">def resp = connector.getVariable("response");
