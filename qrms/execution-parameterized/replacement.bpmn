@@ -69,7 +69,7 @@ if (optimizedParameters && optimizedParameters.trim()) {
   optimizedParameters=param_array;
 } else {
   optimizedParameters = [];
-}
+}}
   request.put("parameters", optimizedParameters);
   requeststring = new JsonBuilder(request).toPrettyString()
   println(requeststring);
