@@ -59,17 +59,20 @@ import groovy.json.JsonBuilder
   } else {
 param_array=[];
 println(optimizedParameters);
-optimizedParameters=optimizedParameters.drop(1).take(optimizedParameters.length()-2);
-println(optimizedParameters);
-optimizedParameters= optimizedParameters.replaceAll("\\s","").split(",");
-println(optimizedParameters);
-optimizedParameters.each{ param->
-param_array.push(param.toDouble());}
-optimizedParameters=param_array;
+if (optimizedParameters && optimizedParameters.trim()) {
+  optimizedParameters=optimizedParameters.drop(1).take(optimizedParameters.length()-2);
+  println(optimizedParameters);
+  optimizedParameters= optimizedParameters.replaceAll("\\s","").split(",");
+  println(optimizedParameters);
+  optimizedParameters.each{ param->
+  param_array.push(param.toDouble());}
+  optimizedParameters=param_array;
+} else {
+  optimizedParameters = [];
 }
   request.put("parameters", optimizedParameters);
   requeststring = new JsonBuilder(request).toPrettyString()
-println(requeststring);
+  println(requeststring);
   return requeststring;</camunda:script>
             </camunda:inputParameter>
                           <camunda:outputParameter name="counts">
